@@ -46,6 +46,9 @@
           </v-avatar>
           <p class="white--text mt-1 subtitle-1 text-center">Mry Imn</p>
         </v-flex>
+        <v-flex class="mt-4 mb-3">
+          <Popup></Popup>
+        </v-flex>
       </v-layout>
       <v-list>
         <v-list-item
@@ -68,7 +71,11 @@
 </template>
 
 <script>
+import Popup from '@/components/Popup.vue'
 export default {
+  components:{
+  Popup
+  },
   data: () => ({
     drawer: false,
     links: [

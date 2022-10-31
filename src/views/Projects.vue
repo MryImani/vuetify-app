@@ -10,7 +10,7 @@
           <v-expansion-panel-content>
             <v-card flat>
               <v-card-text class="px-4 grey--text">
-                <div class="font-weight-bold">due in{{ project.due }}</div>
+                <div class="font-weight-bold">due by {{ project.due }}</div>
             <div>{{ project.content }}</div>
               </v-card-text>
             </v-card>
