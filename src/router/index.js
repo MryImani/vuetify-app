@@ -1,3 +1,5 @@
+import { app } from "@/firebase/config";
+import { getAuth} from "firebase/auth";
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Welcome from '../views/Welcome.vue'
@@ -7,6 +9,19 @@ import Team from '../views/Team.vue'
 
 
 Vue.use(VueRouter)
+
+const requiredAuth = (to , from , next ) => {
+  const auth = getAuth(app);
+  const user = auth.currentUser ;
+  if(!user)
+  {
+    next({ name : 'welcome'})
+  }
+  else
+  {
+    next()
+  }
+}
 
 const routes = [
   {
@@ -18,17 +33,20 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: Dashboard,
-    props : true
+    props : true,
+    beforeEnter: requiredAuth
   },
   {
     path: '/projects',
     name: 'projects',
-    component: Projects
+    component: Projects,
+    beforeEnter: requiredAuth
   },
   {
     path: '/team',
     name: 'team',
-    component: Team
+    component: Team,
+    beforeEnter: requiredAuth
   }
 ]
 
