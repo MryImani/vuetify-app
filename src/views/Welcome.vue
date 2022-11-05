@@ -38,7 +38,7 @@
               <h2>Sign Up</h2>
             </v-card-title>
             <v-card-text>
-              <sign-up class="my-5"></sign-up>
+              <sign-up class="my-5" @successSignUp="showLogin = !showLogin"></sign-up>
               <p class="my-3 subtitle-1 grey--text">
                 Already Registered?
                 <v-btn

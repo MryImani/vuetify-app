@@ -40,7 +40,7 @@ export default {
     ],
     passwordRule: [
       (v) => !!v || "Password is required",
-      // v => v.length >=6 || 'Minimum Length is 6 characters',
+       v => v.length >=6 || 'Minimum Length is 6 characters',
     ],
   }),
   methods: {

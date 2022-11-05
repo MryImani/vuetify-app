@@ -173,6 +173,7 @@ import {
 } from "firebase/firestore";
 import { format, parseISO } from "date-fns";
 import Navbar from "@/components/Navbar.vue";
+import { getAuth } from '@firebase/auth';
 export default {
   name: "Dashboard",
   components: {
@@ -182,9 +183,9 @@ export default {
     dialog: false,
     dialogDelete: false,
     headers: [
-      { text: "Project title", value: "title" },
-      { text: "Person", value: "person" },
-      { text: "Due by", value: "due" },
+      { text: "Project title", value: "title" , sortable: false },
+      { text: "Person", value: "person" , sortable: false  },
+      { text: "Due by", value: "due" , sortable: false  },
       { text: "Status", value: "status", align: "center", sortable: false },
       { text: "Actions", value: "actions", sortable: false },
     ],
@@ -287,6 +288,7 @@ export default {
     },
   },
   mounted() {
+    
     const db = getFirestore(app);
     onSnapshot(
       collection(db, "projects"),
@@ -301,6 +303,8 @@ export default {
         this.error = err.message;
       }
     );
+   
+    
   },
   watch: {
     dialog(val) {

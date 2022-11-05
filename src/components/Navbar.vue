@@ -59,9 +59,9 @@
       <v-layout column align-center>
         <v-flex class="mt-5">
           <v-avatar size="100">
-            <img :src="user.avatar" />
+            <img :src="userAvatar" />
           </v-avatar>
-          <p class="white--text mt-1 subtitle-1 text-center">{{ user.name}}</p>
+          <p class="white--text mt-1 subtitle-1 text-center">{{ userName}}</p>
         </v-flex>
         <v-flex class="mt-4 mb-3">
           <Popup @projectAdded="snackbar = true"></Popup>
@@ -89,13 +89,17 @@
 
 <script>
 import Popup from '@/components/Popup.vue'
+import { app } from "@/firebase/config";
+import {getAuth} from "firebase/auth";
+
 export default {
   components:{
   Popup
   },
   data: () => ({
     drawer: false,
-    user:[],
+    userName : '',
+    userAvatar : '',
     links: [
       { icon: "dashboard", text: "Dashboard", route: "/dashboard" },
       { icon: "folder", text: "My Projects", route: "/projects" },
@@ -103,6 +107,12 @@ export default {
     ],
     snackbar:false
   }),
+  mounted(){
+    const auth = getAuth(app);
+    const user = auth.currentUser;
+    this.userName = user.displayName;
+    this.userAvatar = user.photoURL 
+  }
 };
 </script>
 

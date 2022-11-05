@@ -22,25 +22,25 @@
       :rules="passwordRule"
     ></v-text-field>
     <div class="userImg">
-      <v-avatar v-if="avatar">
-          <img
-            id="uploadPreview"
-            src="/DefaultAvatar.png"
-            alt="DefaultAvatar"
-            srcset=""
-          />
-          
-        </v-avatar>
-        <v-file-input
+      <v-file-input
         id="avatar"
         :rules="imageRules"
         accept="image/png, image/jpeg, image/bmp"
         placeholder="Pick an avatar"
-        prepend-icon="mdi-camera"
+        :prepend-icon="avatarIcon"
         label="Avatar"
         v-model="avatar"
         @change="PreviewImage"
-      ></v-file-input>  
+        ref="avatar"
+      ></v-file-input>
+      <v-avatar v-if="avatar">
+        <img
+          id="uploadPreview"
+          src="/DefaultAvatar.png"
+          alt="DefaultAvatar"
+          srcset=""
+        />
+      </v-avatar>
     </div>
     <v-select
       v-model="role"
@@ -52,13 +52,24 @@
       single-line
       :rules="RoleRule"
     ></v-select>
-    <v-btn class="primary mt-5" color="white" @click="submitHandle"
+    <v-btn
+      class="primary mt-5"
+      color="white"
+      @click="submitHandle"
+      :loading="loading"
       >Sign Up</v-btn
     >
   </v-form>
 </template>
 
 <script>
+import { app } from "@/firebase/config";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
 export default {
   data: () => ({
     name: "",
@@ -66,19 +77,22 @@ export default {
     password: "",
     role: "",
     avatar: null,
+    noImg: false,
+    loading: false,
     roles: ["Web developer", "Grafic designer", "Ui/Ux designer", "Sales guru"],
     nameRules: [(v) => !!v || "Name is required"],
+    avatarIcon: "account_circle",
     emailRules: [
       (v) => !!v || "E-mail is required",
-      //  v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+      v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
     ],
     passwordRule: [
       (v) => !!v || "Password is required",
-      // v => v.length >=6 || 'Minimum Length is 6 characters',
+       v => v.length >=6 || 'Minimum Length is 6 characters',
     ],
     RoleRule: [
       (v) => !!v || "Role is required",
-      // v => v.length >=6 || 'Minimum Length is 6 characters',
+    
     ],
     imageRules: [
       (value) =>
@@ -92,15 +106,52 @@ export default {
     PreviewImage() {
       var oFReader = new FileReader();
       oFReader.readAsDataURL(document.getElementById("avatar").files[0]);
-
       oFReader.onload = function (oFREvent) {
-        document.getElementsByClassName("mdi-camera")[0].remove();
         document.getElementById("uploadPreview").src = oFREvent.target.result;
       };
     },
     submitHandle() {
       if (this.$refs.form.validate()) {
-        console.log();
+        const imageUrl = '/' + document.getElementById("avatar").files[0].name;
+        const user = {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          avatar: imageUrl,
+          role: this.role,
+        };
+        this.loading = true;
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        createUserWithEmailAndPassword(auth, this.email, this.password)
+        .then(() => {
+          updateProfile(auth.currentUser, {
+            displayName: this.name,
+            photoURL: imageUrl,
+          })
+          .then(() => {
+           
+          })
+          .catch(() => {
+           
+          })
+          
+         
+          addDoc(collection(db, "users"), user)
+            .then(() => {
+              this.loading = false;
+          this.$emit('successSignUp') 
+            })
+            .catch((err) => {
+             
+            });
+         
+          
+        })
+        .catch((err) => {
+         
+        })
+        
       }
     },
   },
@@ -108,7 +159,7 @@ export default {
 </script>
 
 <style>
-.userImg{
+.userImg {
   display: flex;
 }
 </style>
