@@ -50,10 +50,27 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn depressed color="grey--text">
+      <v-btn depressed color="grey--text" @click="dialogDelete = !dialogDelete">
         <span>Sign Out</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
+      <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5"
+              >Are you sure you want to sign out ?</v-card-title
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="dialogDelete = !dialogDelete"
+                >Cancel</v-btn
+              >
+              <v-btn color="blue darken-1" text @click="signOut" 
+                >OK</v-btn
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
     </v-app-bar>
     <v-navigation-drawer app v-model="drawer" class="primary">
       <v-layout column align-center>
@@ -90,7 +107,7 @@
 <script>
 import Popup from '@/components/Popup.vue'
 import { app } from "@/firebase/config";
-import {getAuth} from "firebase/auth";
+import {getAuth, signOut} from "firebase/auth";
 
 export default {
   components:{
@@ -100,6 +117,7 @@ export default {
     drawer: false,
     userName : '',
     userAvatar : '',
+    dialogDelete : false,
     links: [
       { icon: "dashboard", text: "Dashboard", route: "/dashboard" },
       { icon: "folder", text: "My Projects", route: "/projects" },
@@ -107,6 +125,16 @@ export default {
     ],
     snackbar:false
   }),
+  methods:{
+    signOut(){
+      const auth = getAuth(app);
+      signOut(auth)
+      .then(() => {
+        this.$router.push('/');
+      })
+      .catch()
+    }
+  },
   mounted(){
     const auth = getAuth(app);
     const user = auth.currentUser;
