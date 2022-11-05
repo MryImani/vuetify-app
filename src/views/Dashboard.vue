@@ -137,6 +137,17 @@
         class="elevation-1"
         @page-count="pageCount = $event"
       >
+        <template v-slot:item.title="{ item }">
+          <v-tooltip top right>
+          <template v-slot:activator="{ on, attrs }">
+              <span class="caption text-lowercase" v-bind="attrs"
+              v-on="on">{{ item.title }}</span>
+           
+          </template>
+
+          <span>{{ item.content }}</span>
+        </v-tooltip>
+        </template>
         <template
           v-slot:item.status="{ item }"
           :class="`pa-3 project ${item.status}`"
