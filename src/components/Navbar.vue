@@ -59,9 +59,9 @@
       <v-layout column align-center>
         <v-flex class="mt-5">
           <v-avatar size="100">
-            <img src="/avatar-1.png" />
+            <img :src="user.avatar" />
           </v-avatar>
-          <p class="white--text mt-1 subtitle-1 text-center">Mry Imn</p>
+          <p class="white--text mt-1 subtitle-1 text-center">{{ user.name}}</p>
         </v-flex>
         <v-flex class="mt-4 mb-3">
           <Popup @projectAdded="snackbar = true"></Popup>
@@ -95,8 +95,9 @@ export default {
   },
   data: () => ({
     drawer: false,
+    user:[],
     links: [
-      { icon: "dashboard", text: "Dashboard", route: "/" },
+      { icon: "dashboard", text: "Dashboard", route: "/dashboard" },
       { icon: "folder", text: "My Projects", route: "/projects" },
       { icon: "person", text: "Team", route: "/team" },
     ],

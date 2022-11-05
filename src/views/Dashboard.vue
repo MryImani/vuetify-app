@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard">
+    <Navbar></Navbar>
     <h1 class="subtitle-1 grey--text">Dashboard</h1>
     <v-container class="my-5">
       <v-layout row class="mb-5">
@@ -38,7 +39,26 @@
           <span>Sort projects by person create this</span>
         </v-tooltip>
       </v-layout>
-      <v-card flat v-for="project in projects" :key="project.title">
+      <v-data-table :headers="headers" :items="projects"  :page.sync="page"
+      :items-per-page="itemsPerPage"
+      hide-default-footer
+      class="elevation-1"
+      @page-count="pageCount = $event">
+        <template v-slot:item.status="{ item }" :class="`pa-3 project ${item.status}`">
+          <div class="right">
+              <v-chip
+                small
+                :class="`${item.status} white--text my-2 caption`"
+                >{{ item.status }}</v-chip
+              >
+            </div>
+    </template>
+      </v-data-table>
+      <!-- <v-card id="projects" flat v-for="project in projects" :key="project.title" :page.sync="page"
+      :items-per-page="itemsPerPage"
+      hide-default-footer
+      class="elevation-1"
+      @page-count="pageCount = $event">
         <v-layout row wrap :class="`pa-3 project ${project.status}`">
           <v-flex xs12 md6>
             <div class="caption grey--text">Project title</div>
@@ -63,19 +83,39 @@
           </v-flex>
         </v-layout>
         <v-divider></v-divider>
-      </v-card>
+      </v-card> -->
+      <div class="text-center pt-3">
+        <v-pagination
+          v-model="page"
+        :length="pageCount"
+          circle
+        ></v-pagination>
+      </div>
     </v-container>
   </div>
 </template>
 
 <script>
 import { app } from "@/firebase/config";
-import {  getFirestore, onSnapshot, collection} from "firebase/firestore";
+import { getFirestore, onSnapshot, collection } from "firebase/firestore";
+import Navbar from "@/components/Navbar.vue";
 export default {
   name: "Dashboard",
+  components: {
+    Navbar,
+  },
   data: () => ({
+    headers : [ { text: 'Project title', value: 'title' },
+          { text: 'Person', value: 'person' },
+          { text: 'Due by', value: 'due' },
+          { text: 'Status', value: 'status' ,align: 'center',
+            sortable: false, },
+          ],
     projects: [],
-    error:null
+    error: null,
+    page: 1,
+    pageCount: 0,
+    itemsPerPage: 5,
   }),
   methods: {
     sortBy(prop) {
@@ -84,21 +124,23 @@ export default {
       });
     },
   },
-  mounted(){
+  mounted() {
     const db = getFirestore(app);
     onSnapshot(
-        collection(db, 'projects'),
-        (snapshot) => {
-            const result = [];
-            snapshot.docs.forEach((doc) => {
-                doc.data().due && result.push({ ...doc.data(), id: doc.id });
-            })
-            this.projects = result;
-        },
-        (err) => {
-            this.error = err.message
+      collection(db, "projects"),
+      (snapshot) => {
+        const result = [];
+        snapshot.docs.forEach((doc) => {
+          doc.data().due && result.push({ ...doc.data(), id: doc.id });
         });
-  }
+        this.projects = result;
+        
+      },
+      (err) => {
+        this.error = err.message;
+      }
+    );
+  },
 };
 </script>
 <style>

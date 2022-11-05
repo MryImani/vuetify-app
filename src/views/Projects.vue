@@ -1,5 +1,7 @@
 <template>
+  
   <div class="projects">
+    <Navbar></Navbar>
     <h1 class="subtitle-1 grey--text">Projects</h1>
     <v-container class="my-5">
       <v-expansion-panels>
@@ -24,8 +26,12 @@
 <script>
 import { app } from "@/firebase/config";
 import {  getFirestore, onSnapshot, collection} from "firebase/firestore";
+import Navbar from '@/components/Navbar.vue'
 export default {
   name: "Projects",
+  components:{
+    Navbar
+  },
   data: () => ({
     projects: [],
     error:null
